@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
+        trim: true,
         required: [true, 'Please provide name'],
         minlength: 3,
         maxlength: 50
@@ -19,9 +20,23 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide password']
     },
+    lastName: {
+        type: String,
+        trim: true,
+        maxlength: 20,
+        default: 'lastName'
+    },
+    location: {
+        type: String,
+        trim: true,
+        maxlength: 20,
+        default: 'my city'
+    }
 })
 
 UserSchema.pre('save', async function () {
+    //console.log(this.modifiedPaths())
+    if (!this.isModified('password')) return
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
 })
